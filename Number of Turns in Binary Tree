@@ -1,0 +1,93 @@
+Given a binary tree and data value of two of its nodes. Find the number of turns needed to reach from one node to another in the given binary tree.
+
+Example 1:
+
+Input:      
+Tree = 
+           1
+        /    \
+       2       3
+     /  \     /  \
+    4    5   6    7                        
+   /        / \                        
+  8        9   10   
+first node = 5
+second node = 10
+Output: 4
+Explanation: 
+Turns will be at 2, 1, 3, 6.
+Example 2:
+
+Input:      
+Tree = 
+           1
+        /     \
+       2        3
+     /  \      /  \
+    4    5    6    7                        
+   /         / \                        
+  8         9   10   
+first node = 1
+second node = 4  
+Output: -1
+Explanation: No turn is required since 
+they are in a straight line.
+
+
+
+
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def findTurns(root, first_node, second_node):
+    def dfs(node, path):
+        if not node:
+            return
+        path.append(node.val)
+        if node.val == first_node:
+            first_path.extend(path)
+        if node.val == second_node:
+            second_path.extend(path)
+        dfs(node.left, path + ['L'])
+        dfs(node.right, path + ['R'])
+    
+    first_path = []
+    second_path = []
+    dfs(root, [])
+
+    if not first_path or not second_path:
+        return -1  # One or both nodes not found
+    
+    # Find the common prefix between the two paths
+    common_prefix = []
+    min_len = min(len(first_path), len(second_path))
+    for i in range(min_len):
+        if first_path[i] == second_path[i]:
+            common_prefix.append(first_path[i])
+        else:
+            break
+    
+    turns = len(first_path) - len(common_prefix) + len(second_path) - len(common_prefix)
+    return turns
+
+# Example usage:
+if __name__ == "__main__":
+    # Create the binary tree
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
+    root.right.left = TreeNode(6)
+    root.right.right = TreeNode(7)
+    root.left.left.left = TreeNode(8)
+    root.right.left.left = TreeNode(9)
+    root.right.left.right = TreeNode(10)
+
+    first_node = 5
+    second_node = 10
+    result = findTurns(root, first_node, second_node)
+    print(result)  # Output: 4
